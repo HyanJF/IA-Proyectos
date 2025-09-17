@@ -2,10 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.AI;
+using TMPro;
 
 public class BobSpa : MonoBehaviour
 {
-    private int health = 50;
+    private float health = 50;
+    private float maxHealth = 100;
 
     public Transform player;
 
@@ -21,6 +23,14 @@ public class BobSpa : MonoBehaviour
 
     private NavMeshAgent agentSmith;
 
+    public TextMeshProUGUI fleeText;
+    public TextMeshProUGUI chaseText;
+
+    public float viewDistance = 10f;
+    public float viewAngle = 45f;
+
+    public float criticalHealthLimit = 0.3f;
+
     private void Start()
     {
         actionScores = new Dictionary<string, float>()
@@ -30,6 +40,8 @@ public class BobSpa : MonoBehaviour
             {"Patrol" ,0f }
         };
 
+        health = maxHealth;
+
         gameObject.TryGetComponent(out agentSmith);
     }
 
@@ -37,20 +49,35 @@ public class BobSpa : MonoBehaviour
     {
         //SENSE
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
-        Ray ray = new Ray(transform.position + (Vector3.up * 0.5f), player.position - transform.position);
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            lineOfSight = hit.collider.gameObject.TryGetComponent<PlayerMovement>(out PlayerMovement _);
-        }
+        lineOfSight = PlayerInFOV();
         if (Vector3.Distance(patrolPoints[patrolIndex].position, transform.position) < distanceCheck)
         {
             patrolIndex = (patrolIndex + 1) % patrolPoints.Length;
         }
 
         //PLAN 
-        actionScores["Flee"] = ((distanceToPlayer < fleeDistance ? 10 : 0) + (health < (health * 0.5) ? 5f : 0)) * (lineOfSight == true ? 1 : 0);
-        actionScores["Chase"] = ((distanceCheck >= fleeDistance ? 8f : 0f) + (health > (health * 0.5) ? 5f : 0)) * (lineOfSight == true ? 1 : 0);
+
+        float healthRatio = Mathf.Clamp01(health / maxHealth);
+        float distanceRatio = Mathf.Clamp01(distanceToPlayer / fleeDistance);
+
+        if (healthRatio <= criticalHealthLimit) { distanceRatio = 0; }
+
+        float riskFactor = (1 - healthRatio) * (1 - distanceRatio);
+
+        float aggroFactor = healthRatio * distanceRatio;
+
+        float total = riskFactor + aggroFactor;
+
+        riskFactor /= total;
+        aggroFactor /= total;
+        aggroFactor *= healthRatio > criticalHealthLimit ? 1 : 0;
+
+        actionScores["Flee"] = riskFactor * 10 * (lineOfSight == true ? 1 : 0);
+        actionScores["Chase"] = aggroFactor * 10 * (lineOfSight == true ? 1 : 0);
         actionScores["Patrol"] = 3f;
+
+        fleeText.text = "FLEE = " + actionScores["Flee"];
+        chaseText.text = "CHASE = " + actionScores["Chase"];
 
         string chosenAction = actionScores.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
         switch (chosenAction)
@@ -70,9 +97,41 @@ public class BobSpa : MonoBehaviour
         }
     }
 
+    private bool PlayerInFOV()
+    {
+        Vector3 dirToPlayer = (player.position - transform.position).normalized;
+        
+        if (distanceToPlayer > viewDistance)
+        {
+            return false;
+        }
+
+        float angletoPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+        if (angletoPlayer > viewAngle / 2)
+        {
+            return false;
+        }
+
+        if (Physics.Raycast(transform.position, dirToPlayer, out RaycastHit hit, distanceToPlayer))
+        {
+            if (hit.collider.gameObject.TryGetComponent(out PlayerMovement _))
+            {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public void GetHit()
+    {
+        health -= 9;
+        Debug.Log("Was Hit! Only have " +  health + " hp left.");
+    }
+
     private void Flee()
     {
-        Vector3 fleeDir = (transform.position - player.position).normalized * 2;
+        Vector3 fleeDir = transform.position + (transform.position - player.position).normalized * 2;
         agentSmith.SetDestination(fleeDir);
     }
 
