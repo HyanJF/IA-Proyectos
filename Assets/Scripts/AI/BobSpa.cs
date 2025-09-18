@@ -56,6 +56,7 @@ public class BobSPA : MonoBehaviour
         }
 
         //PLAN 
+        UpdatePrediction();
 
         float healthRatio = Mathf.Clamp01(health / maxHealth);
         float distanceRatio = Mathf.Clamp01(distanceToPlayer / fleeDistance);
