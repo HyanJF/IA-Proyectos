@@ -1123,8 +1123,8 @@ Camera:
   m_GameObject: {fileID: 660144219}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.11641154, g: 0.1591907, b: 0.2264151, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1173,8 +1173,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660144219}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.30868155, y: -0.0037090783, z: 0.0012055201, w: -0.95115745}
-  m_LocalPosition: {x: -15.236151, y: 72.00415, z: -122.61011}
+  m_LocalRotation: {x: -0.22339818, y: -0.008172583, z: 0.0019424461, w: -0.9746911}
+  m_LocalPosition: {x: -12.178585, y: 25.89713, z: -81.98399}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1293,8 +1293,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -75}
-  m_SizeDelta: {x: 301.4258, y: 51.075}
+  m_AnchoredPosition: {x: 0.00066498783, y: -109.806755}
+  m_SizeDelta: {x: 500.94, y: 84.137}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &847090343
 MonoBehaviour:
@@ -1318,8 +1318,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'CHASE = '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1343,8 +1343,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1723,9 +1723,12 @@ MonoBehaviour:
   distanceCheck: 2
   fleeText: {fileID: 1732793944}
   chaseText: {fileID: 847090343}
-  viewDistance: 10
-  viewAngle: 45
+  viewDistance: 25
+  viewAngle: 60
   criticalHealthLimit: 0.3
+  maxDistFromDirection: 100
+  step: 10
+  fleeLength: 3
 --- !u!195 &981528618
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2380,8 +2383,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -778.24036, y: 481.4477}
-  m_SizeDelta: {x: 303.5192, y: 55.1048}
+  m_AnchoredPosition: {x: -679.53064, y: 445.00003}
+  m_SizeDelta: {x: 500.9387, y: 84.1371}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1732793944
 MonoBehaviour:
@@ -2405,8 +2408,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'FLEE = '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2430,8 +2433,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

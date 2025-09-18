@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine.AI;
 using TMPro;
 
-public class BobSpa : MonoBehaviour
+public class BobSPA : MonoBehaviour
 {
     private float health = 50;
     private float maxHealth = 100;
@@ -132,17 +132,76 @@ public class BobSpa : MonoBehaviour
     private void Flee()
     {
         Vector3 fleeDir = transform.position + (transform.position - player.position).normalized * 2;
-        agentSmith.SetDestination(fleeDir);
+        if (NavMesh.SamplePosition(fleeDir, out NavMeshHit hit, 1, NavMesh.AllAreas))
+        {
+            agentSmith.SetDestination(fleeDir);
+        }
+        else
+        {
+            agentSmith.SetDestination(FindFleeAlternative(fleeDir));
+        }
     }
 
     private void Chase()
     {
-        agentSmith.SetDestination(player.position);
+        agentSmith.SetDestination(predictedPlayerPos);
     }
 
     private void Patrol()
     {
         agentSmith.SetDestination(patrolPoints[patrolIndex].position);
     }
-    
+
+    #region FleeAlternative
+    public float maxDistFromDirection = 100;
+    public float step = 10f;
+    public float fleeLength = 3f;
+
+
+    private Vector3 FindFleeAlternative(Vector3 fleeDirection)
+    {
+        float maxDistanceFromPlayer = 0;
+        Vector3 bestoPosition = transform.position;
+
+        for(float angle = -maxDistFromDirection; angle <= maxDistFromDirection; angle += step)
+        {
+            Vector3 dir = Quaternion.Euler(0, angle, 0) * fleeDirection;
+            Vector3 candidate = transform.position + dir;
+
+            if ( NavMesh.SamplePosition(candidate, out NavMeshHit hit, 1f, NavMesh.AllAreas))
+            {
+                float distToPlayer = Vector3.Distance(candidate, player.position);
+                if (distToPlayer > maxDistanceFromPlayer )
+                {
+                    maxDistanceFromPlayer = distToPlayer;
+                    bestoPosition = hit.position;
+                }
+            }
+        }
+
+        return bestoPosition;
+
+    }
+
+    #endregion
+
+    #region Predict
+    Vector3 lastPlayerPosition = new Vector3();
+    Vector3 predictedPlayerPos = new Vector3();
+
+    private void UpdatePrediction()
+    {
+        Vector3 currentPlayerPos = player.position;
+        Vector3 moveDirection = (currentPlayerPos - lastPlayerPosition).normalized;
+
+        float predictioDistance = distanceToPlayer * 0.5f;
+
+        predictedPlayerPos = currentPlayerPos + moveDirection * predictioDistance;
+
+        lastPlayerPosition = currentPlayerPos;
+    }
+
+
+    #endregion
+
 }

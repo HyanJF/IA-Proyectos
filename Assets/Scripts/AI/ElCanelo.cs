@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 public class ElCanelo : MonoBehaviour
 {
-    private BobSpa bob;
+    private BobSPA bob;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
