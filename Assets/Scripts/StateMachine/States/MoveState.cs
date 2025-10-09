@@ -8,6 +8,6 @@ public class MoveState : State
 
     public override void UpdateState(StateMachine stateMachine)
     {
-        stateMachine.transform.Translate(direction * speed * Time.deltaTime, Space.Self);
+        stateMachine.transform.Translate(direction * speed * Time.deltaTime);
     }
 }
