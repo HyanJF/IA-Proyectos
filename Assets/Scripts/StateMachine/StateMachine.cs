@@ -1,43 +1,50 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class StateMachine : MonoBehaviour
 {
-    public State initialState;
     public State currentState;
-    public FSMContext context = new FSMContext();
+    public Blackboard blackboard;
 
-    private void Start()
+    void Start()
     {
-        Changestate(initialState);
-    }
+        blackboard.SetValue("recursosEnStore", 1);
 
-    private void Update()
-    {
+        var agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null)
+            blackboard.SetValue("navAgent", agent);
+
+        GameObject store = GameObject.FindGameObjectWithTag("Store");
+        if (store != null)
+            blackboard.SetValue("storeObject", store);
+
+        GameObject baseObj = GameObject.FindGameObjectWithTag("Base");
+        if (baseObj != null)
+            blackboard.SetValue("baseObject", baseObj);
+
+        if (!blackboard.HasValue("searchRadius"))
+            blackboard.SetValue("searchRadius", 10f);
+        if (!blackboard.HasValue("wanderRadius"))
+            blackboard.SetValue("wanderRadius", 20f);
+
         if (currentState != null)
         {
-            currentState.UpdateState(this);
-            currentState.CheckTransitions(this);
+            currentState.Initialize(this, blackboard);
+            currentState.Enter();
         }
     }
-    public void Changestate(State state)
+
+    void Update()
     {
-        if (currentState == state || state == null)
-        {
-            return;
-        }
-        if (currentState == null)
-        {
-            currentState.ExitState(this);
-        }
-
-        currentState = state;
-        currentState.EnterState(this);
+        currentState?.Execute();
     }
-}
 
-[SerializeField]
-public class FSMContext
-{
-    public GameObject playab;
-    public LayerMask layerInecesaria;
+    public void ChangeState(State newState)
+    {
+        if (newState == null) return;
+
+        currentState?.Exit();
+        currentState = newState;
+        currentState.Initialize(this, blackboard);
+        currentState.Enter();
+    }
 }

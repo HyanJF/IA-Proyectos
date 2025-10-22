@@ -1,26 +1,17 @@
 using UnityEngine;
 
-public abstract class State : ScriptableObject
+public abstract class State : MonoBehaviour
 {
-    public Transition[] transitions;
-    
-    public virtual void EnterState(StateMachine stateMachine) { }
+    protected Blackboard blackboard;
+    protected StateMachine stateMachine;
 
-    public virtual void ExitState(StateMachine stateMachine) { }
-
-    public virtual void UpdateState(StateMachine stateMachine) { }
-
-    public void CheckTransitions(StateMachine stateMachine)
+    public virtual void Initialize(StateMachine sm, Blackboard bb)
     {
-        foreach (var t in transitions)
-        {
-            if (t.condition != null && t.condition.Check(stateMachine))
-            {
-                stateMachine.Changestate(t.state);
-                break;
-            }
-        }
+        stateMachine = sm;
+        blackboard = bb;
     }
 
-
+    public abstract void Enter();
+    public abstract void Execute();
+    public abstract void Exit();
 }
