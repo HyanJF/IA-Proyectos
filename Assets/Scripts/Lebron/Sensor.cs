@@ -30,5 +30,47 @@ public class Sensor : MonoBehaviour
     private void Start()
     {
         t = timeInterval;
+        if (t <= 0)
+        {
+            UpdateTargetPosition(target);
+            t = timeInterval;
+        }
+    }
+
+    private void UpdateTargetPosition(GameObject target = null)
+    {
+        this.target = target;
+        if (IsTargetInRange && (lastKnownPosition != TargetPosition || lastKnownPosition != Vector3.zero))
+        {
+            lastKnownPosition = TargetPosition;
+            if (OnTargetChanged != null)
+            {
+                OnTargetChanged.Invoke();
+            }
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(!other.CompareTag("Player"))
+        { 
+            return; 
+        }
+        UpdateTargetPosition(other.gameObject);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+        {
+            return;
+        }
+        UpdateTargetPosition();
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = IsTargetInRange ? Color.red : Color.green;
+        Gizmos.DrawWireSphere(transform.position, detectionRadius);
     }
 }
